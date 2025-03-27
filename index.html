@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hashboard</title>
+    <style>
+      :root {
+        --geist-background: #000;
+        --geist-foreground: #fff;
+        --accents-1: #111;
+        --accents-2: #333;
+        --accents-3: #444;
+        --accents-4: #666;
+        --accents-5: #888;
+        --geist-success: #0070f3;
+        --geist-error: #ff0000;
+        --geist-radius: 5px;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--geist-background);
+        color: var(--geist-foreground);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        margin: 4rem 0 2rem;
+        background: linear-gradient(to right, #fff, #888);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      form {
+        background: var(--accents-1);
+        padding: 1.5rem 2rem;
+        border-radius: var(--geist-radius);
+        border: 1px solid var(--accents-2);
+        margin-bottom: 2rem;
+        width: 100%;
+        max-width: 400px;
+        transition: border-color 0.15s ease;
+      }
+
+      form:hover {
+        border-color: var(--accents-3);
+      }
+
+      label {
+        display: block;
+        color: var(--accents-5);
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--accents-1);
+        border: 1px solid var(--accents-2);
+        border-radius: var(--geist-radius);
+        color: var(--geist-foreground);
+        font-size: 1rem;
+        transition: all 0.15s ease;
+        margin-bottom: 1rem;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--geist-success);
+      }
+
+      button {
+        background: var(--geist-success);
+        color: var(--geist-foreground);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--geist-radius);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        width: 100%;
+      }
+
+      button:hover {
+        background: #0061d3;
+      }
+
+      #results {
+        background: var(--accents-1);
+        padding: 2rem;
+        border-radius: var(--geist-radius);
+        border: 1px solid var(--accents-2);
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .data-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--accents-2);
+      }
+
+      .data-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .label {
+        font-weight: 500;
+        color: var(--accents-5);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .value {
+        font-size: 1.1rem;
+        color: var(--geist-foreground);
+        word-break: break-all;
+        font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      }
+
+      .error {
+        color: var(--geist-error);
+        padding: 1rem;
+        background: rgba(255, 0, 0, 0.1);
+        border-radius: var(--geist-radius);
+        margin-top: 1rem;
+        border: 1px solid rgba(255, 0, 0, 0.2);
+      }
+
+      h2 {
+        color: var(--geist-foreground);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hashboard</h1>
+    <form id="wallet-form">
+      <label for="wallet-address">Enter Wallet Address:</label>
+      <input type="text" id="wallet-address" placeholder="0x..." required />
+      <button type="submit">Submit</button>
+    </form>
+    <div id="results">
+      <h2>Wallet Data</h2>
+      <div id="wallet-data">
+        <div class="data-item">
+          <div class="label">No data yet. Enter a wallet address to begin.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('wallet-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const walletAddress = document.getElementById('wallet-address').value;
+        const resultsDiv = document.getElementById('wallet-data');
+        
+        try {
+          const data = await window.electron.fetchWalletData(walletAddress);
+          
+          if (data.error) {
+            resultsDiv.innerHTML = `<div class="error">${data.error}</div>`;
+            return;
+          }
+
+          const balance = parseFloat(data.balance) / 1e18; // Convert Wei to Ether
+          
+          resultsDiv.innerHTML = `
+            <div class="data-item">
+              <div class="label">Address</div>
+              <div class="value">${data.address}</div>
+            </div>
+            <div class="data-item">
+              <div class="label">Balance</div>
+              <div class="value">${balance.toFixed(4)} ETH</div>
+            </div>
+            <div class="data-item">
+              <div class="label">Transaction Count</div>
+              <div class="value">${data.transactionCount}</div>
+            </div>
+          `;
+        } catch (error) {
+          console.error('Error:', error);
+          resultsDiv.innerHTML = `
+            <div class="error">
+              An error occurred while fetching wallet data.
+            </div>
+          `;
+        }
+      });
+    </script>
+  </body>
+</html>

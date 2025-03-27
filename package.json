@@ -1,0 +1,23 @@
+{
+  "name": "hashboard",
+  "version": "1.0.0",
+  "description": "Ethereum dashboard",
+  "main": "main.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "keywords": [
+    "electron",
+    "crypto"
+  ],
+  "author": "Benjamin Liu",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "electron": "^35.1.2",
+    "ethers": "^6.13.5",
+    "viem": "^2.24.1"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.4.38"
+  }
+}
