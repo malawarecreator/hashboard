@@ -1,6 +1,6 @@
 {
   "name": "hashboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ethereum dashboard",
   "main": "main.js",
   "scripts": {
@@ -30,7 +30,9 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "assets/download"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",

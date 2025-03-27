@@ -13,6 +13,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: path.join(__dirname, 'assets', 'download.ico'), // Path to your icon file
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
