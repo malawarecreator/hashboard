@@ -1,6 +1,6 @@
 {
   "name": "hashboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Ethereum dashboard",
   "main": "main.js",
   "scripts": {
@@ -37,7 +37,21 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "hashboard"
+            "name": "hashboard",
+            "setupIcon": "assets/download.ico",
+            "loadingGif": "assets/loading.gif",
+            "setupExe": "Hashboard-Setup.exe",
+            "iconUrl": "file://assets/download.ico",
+            "shortcuts": [
+              {
+                "name": "Hashboard",
+                "description": "Ethereum dashboard",
+                "icon": "assets/download.ico",
+                "target": [
+                  "Hashboard.exe"
+                ]
+              }
+            ]
           }
         },
         {
